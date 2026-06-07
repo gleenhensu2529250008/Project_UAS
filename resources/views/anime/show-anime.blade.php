@@ -63,7 +63,7 @@
 
                     <img
                         src="{{ asset('storage/' . $anime->gambar) }}"
-                        alt="{{ $anime->nama }}"
+                        alt="{{ $anime->judul_anime }}"
                         width="225"
                         height="318"
                         style="object-fit: cover;"
@@ -74,7 +74,7 @@
                 <div class="card-body">
 
                     <h5 class="card-title fw-bold text-white">
-                        {{ $anime->nama }}
+                        {{ $anime->judul_anime }}
                     </h5>
 
                     <a

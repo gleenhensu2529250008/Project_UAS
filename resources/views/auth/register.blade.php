@@ -529,6 +529,8 @@
     </div>
 
     <!-- FORM -->
+    <form action="/register" method="POST">
+      @csrf
     <div class="form-grid">
 
       <!-- USERNAME -->
@@ -606,11 +608,12 @@
 
     <!-- LOGIN LINK -->
     <div class="login-row">
-      Sudah punya akun? <a href="#">Masuk sekarang</a>
+      Sudah punya akun? <a href="/login">Masuk sekarang</a>
     </div>
 
   </div>
 </div>
+</form>
 
 <script>
   /* ── Slideshow ── */

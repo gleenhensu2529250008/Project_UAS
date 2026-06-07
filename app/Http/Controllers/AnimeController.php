@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Anime;
-use App\Http\Requests\StoreAnimeRequest;
-use App\Http\Requests\UpdateAnimeRequest;
+use App\Models\Favorite;
+use Illuminate\Http\Request;
 
 class AnimeController extends Controller
 {
@@ -13,9 +13,9 @@ class AnimeController extends Controller
      */
     public function index()
     {
-         $animes = Anime::all();
+        $animes = Anime::orderBy('created_at', 'desc')->get();
 
-        return view('anime.show-anime', compact('animes'));
+        return view('anime.list-anime', compact('animes'));
     }
 
     /**
@@ -29,16 +29,33 @@ class AnimeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAnimeRequest $request)
+    public function store(Request $request)
     {
-         $path = $request->file('gambar')->store('anime', 'public');
-
-        Anime::create([
-            'nama' => $request->nama,
-            'gambar' => $path,
+        $request->validate([
+            'judul_anime' => ['required', 'min:3'],
+            'studio' => ['required', 'min:3'],
+            'genre' => ['required'],
+            'episode' => ['required'],
+            'sinopsis' => ['required'],
+            'rating' => ['required'],
+            'gambar' => ['required', 'image']
         ]);
 
-        return redirect('/home');
+        $gambar = $request->file('gambar')
+            ->store('anime', 'public');
+
+        Anime::create([
+            'judul_anime' => $request->judul_anime,
+            'studio' => $request->studio,
+            'genre' => $request->genre,
+            'episode' => $request->episode,
+            'sinopsis' => $request->sinopsis,
+            'rating' => $request->rating,
+            'gambar' => $gambar
+        ]);
+
+        return redirect('/anime')
+            ->with('save', 'Anime berhasil ditambahkan');
     }
 
     /**
@@ -46,7 +63,7 @@ class AnimeController extends Controller
      */
     public function show(Anime $anime)
     {
-        //
+        return view('anime.detail-anime', compact('anime'));
     }
 
     /**
@@ -54,15 +71,36 @@ class AnimeController extends Controller
      */
     public function edit(Anime $anime)
     {
-        //
+        return view('anime.edit-anime', [
+            'anime' => $anime
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAnimeRequest $request, Anime $anime)
+    public function update(Request $request, Anime $anime)
     {
-        //
+        $request->validate([
+            'judul_anime' => ['required', 'min:3'],
+            'studio' => ['required', 'min:3'],
+            'genre' => ['required'],
+            'episode' => ['required'],
+            'sinopsis' => ['required'],
+            'rating' => ['required']
+        ]);
+
+        $anime->update([
+            'judul_anime' => $request->judul_anime,
+            'studio' => $request->studio,
+            'genre' => $request->genre,
+            'episode' => $request->episode,
+            'sinopsis' => $request->sinopsis,
+            'rating' => $request->rating
+        ]);
+
+        return redirect('/anime')
+            ->with('edit', 'Anime berhasil diubah');
     }
 
     /**
@@ -70,6 +108,45 @@ class AnimeController extends Controller
      */
     public function destroy(Anime $anime)
     {
-        //
+        $anime->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Anime berhasil dihapus');
     }
+    public function home()
+{
+    $animes = Anime::orderBy('created_at', 'desc')
+        ->take(8)
+        ->get();
+
+    return view('anime.show-anime', compact('animes'));
+}
+public function favorite()
+{
+    $favorites = Favorite::with('anime')->get();
+
+    return view(
+        'anime.fav-anime',
+        compact('favorites')
+    );
+}
+public function addFavorite(Anime $anime)
+{
+    Favorite::firstOrCreate([
+        'anime_id' => $anime->id
+    ]);
+
+    return redirect()
+        ->back()
+        ->with('success', 'Anime ditambahkan ke Favorite');
+}
+public function removeFavorite($id)
+{
+    Favorite::where('anime_id', $id)->delete();
+
+    return redirect()
+        ->back()
+        ->with('success', 'Anime dihapus dari Favorite');
+}
 }

@@ -409,6 +409,8 @@
     </div>
 
     <!-- FIELDS -->
+    <form action="/login" method="POST">
+      @csrf
     <div class="field">
       <label>Email / Username</label>
       <div class="field-wrap">
@@ -440,10 +442,11 @@
 
     <!-- REGISTER -->
     <div class="register-row">
-      Belum punya akun? <a href="#">Daftar sekarang</a>
+      Belum punya akun?   <a href="/register">Daftar sekarang</a>
     </div>
   </div>
 </div>
+</form>
 
 <script>
   /* ── Checkbox visual ── */

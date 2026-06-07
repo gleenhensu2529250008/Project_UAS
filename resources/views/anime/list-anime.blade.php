@@ -54,12 +54,12 @@
                         <div class="d-flex">
 
                             <img
-                                src="{{ asset('storage/'.$anime->gambar) }}"
-                                width="100"
-                                height="140"
-                                style="object-fit:cover"
-                                class="rounded me-3"
-                            >
+    src="{{ asset('storage/'.$anime->gambar) }}"
+    width="90"
+    height="130"
+    style="object-fit:cover;border-radius:10px;"
+    class="me-3 shadow"
+>
 
                             <div>
 
@@ -110,16 +110,56 @@
                     </td>
 
                     <!-- Button -->
-                    <td class="text-center">
+                    <td>
 
-                        <a
-                            href="/anime/{{ $anime->id }}"
-                            class="btn btn-outline-light"
-                        >
-                            Detail
-                        </a>
+    <div class="d-flex flex-wrap gap-2 justify-content-center">
 
-                    </td>
+        <!-- Detail -->
+        <a href="{{ route('anime.show', $anime->id) }}"
+           class="btn btn-info btn-sm">
+            Detail
+        </a>
+
+        <!-- Edit -->
+        <a href="{{ route('anime.edit', $anime->id) }}"
+           class="btn btn-warning btn-sm">
+            Edit
+        </a>
+
+        <!-- Favorite -->
+        <form action="{{ route('favorite.store') }}"
+      method="POST">
+
+    @csrf
+
+    <input type="hidden"
+           name="anime_id"
+           value="{{ $anime->id }}">
+
+    <button type="submit"
+            class="btn btn-danger btn-sm">
+        ❤️
+    </button>
+
+</form>
+        <!-- Hapus -->
+        <form action="{{ route('anime.destroy', $anime->id) }}"
+              method="POST">
+
+            @csrf
+            @method('DELETE')
+
+            <button type="submit"
+                    class="btn btn-secondary btn-sm"
+                    onclick="return confirm('Yakin ingin menghapus anime ini?')">
+                Hapus
+            </button>
+
+        </form>
+
+    </div>
+
+</td>
 
                 </tr>
 
@@ -135,25 +175,32 @@
 
 <style>
 
-table{
-    background:#161616;
-    color:white;
+.table{
+    background: transparent !important;
+    color: white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 0 20px rgba(255,20,147,.15);
 }
 
-thead{
-    background:#ff1493;
+.table th{
+    background: #ff1493 !important;
+    color: white !important;
+    border: none;
+}
+
+.table td{
+    background: #161616 !important;
+    color: white !important;
+    border-color: #333 !important;
+}
+
+.table tbody tr:hover td{
+    background: #202020 !important;
 }
 
 .text-pink{
-    color:#ff1493;
-}
-
-tbody tr{
-    border-bottom:1px solid #333;
-}
-
-tbody tr:hover{
-    background:#202020;
+    color: #ff1493;
 }
 
 </style>

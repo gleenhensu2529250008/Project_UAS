@@ -2,8 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AnimeController;
-use App\Models\Anime;
-
+use App\Http\Controllers\FavoriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,32 +16,16 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Home (Show Anime)
+| Home
 |--------------------------------------------------------------------------
 */
 
-Route::get('/home', function () {
-   return view('anime.show-anime');
-})->name('home');
-
+Route::get('/home', [AnimeController::class, 'home'])
+    ->name('home');
 
 /*
 |--------------------------------------------------------------------------
-| Anime List
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/anime', function () {
-
-    $animes = Anime::all();
-
-    return view('anime.list-anime', compact('animes'));
-
-})->name('anime.index');
-
-/*
-|--------------------------------------------------------------------------
-| Favorite Anime
+| Favorite
 |--------------------------------------------------------------------------
 */
 
@@ -52,13 +35,9 @@ Route::get('/favorite', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Login & Register
+| Authentication
 |--------------------------------------------------------------------------
 */
-
-Route::get('/anime/create', function () {
-    return view('anime.create-anime');
-})->name('anime.create');
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -69,13 +48,12 @@ Route::get('/register', function () {
 })->name('register');
 
 
-Route::get('/home', [AnimeController::class, 'index'])
-    ->name('home');
+/*
+|--------------------------------------------------------------------------
+| Anime CRUD
+|--------------------------------------------------------------------------
+*/
 
-Route::post('/anime', [AnimeController::class, 'store']);
-
-Route::get('/anime/create', [AnimeController::class, 'create'])
-    ->name('anime.create');
-
-Route::post('/anime', [AnimeController::class, 'store'])
-    ->name('anime.store');
+Route::resource('anime', AnimeController::class);
+Route::resource('favorite', FavoriteController::class)
+    ->only(['index', 'store', 'destroy']);
