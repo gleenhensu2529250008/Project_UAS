@@ -10,50 +10,19 @@ use App\Http\Controllers\FavoriteController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('guest.welcome');
-})->name('welcome');
+Route::middleware('auth')->group(function () {
+    Route::get('/', function () {
+        return view('guest.welcome');
+    })->name('welcome');
 
-/*
-|--------------------------------------------------------------------------
-| Home
-|--------------------------------------------------------------------------
-*/
+    Route::get('/home', [AnimeController::class, 'home'])
+        ->name('home');
 
-Route::get('/home', [AnimeController::class, 'home'])
-    ->name('home');
+    Route::get('/favorite', function () {
+        return view('anime.fav-anime');
+    })->name('favorite');
 
-/*
-|--------------------------------------------------------------------------
-| Favorite
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/favorite', function () {
-    return view('anime.fav-anime');
-})->name('favorite');
-
-/*
-|--------------------------------------------------------------------------
-| Authentication
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
-
-
-/*
-|--------------------------------------------------------------------------
-| Anime CRUD
-|--------------------------------------------------------------------------
-*/
-
-Route::resource('anime', AnimeController::class);
-Route::resource('favorite', FavoriteController::class)
-    ->only(['index', 'store', 'destroy']);
+    Route::resource('anime', AnimeController::class);
+    Route::resource('favorite', FavoriteController::class)
+        ->only(['index', 'store', 'destroy']);
+});

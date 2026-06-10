@@ -411,11 +411,22 @@
     <!-- FIELDS -->
     <form action="/login" method="POST">
       @csrf
+
+      @if ($errors->any())
+        <div class="alert alert-danger py-2 px-3 mb-3" style="border-radius: 10px; font-size: 14px; background: rgba(255, 79, 123, 0.2); border: 1px solid var(--error); color: #fff;">
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+      @endif
+
     <div class="field">
       <label>Email / Username</label>
       <div class="field-wrap">
         <span class="field-icon">✦</span>
-        <input type="text" placeholder="Masukkan username..." />
+        <input type="text" name="email" placeholder="Masukkan username..." value="{{ old('email') }}" required />
       </div>
     </div>
 
@@ -423,14 +434,14 @@
       <label>Password</label>
       <div class="field-wrap">
         <span class="field-icon">🔐</span>
-        <input type="password" placeholder="••••••••" />
+        <input type="password" name="password" placeholder="••••••••" required />
       </div>
     </div>
 
     <!-- OPTIONS -->
     <div class="options">
       <label class="remember">
-        <input type="checkbox" id="rememberMe" />
+        <input type="checkbox" id="rememberMe" name="remember" />
         <span class="chk-box" id="chkBox"></span>
         Ingat saya
       </label>
@@ -438,7 +449,7 @@
     </div>
 
     <!-- BUTTON -->
-    <button class="btn-login" onclick="handleLogin()">Masuk ✦</button>
+    <button type="submit" class="btn-login">Masuk ✦</button>
 
     <!-- REGISTER -->
     <div class="register-row">

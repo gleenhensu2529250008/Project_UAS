@@ -52,7 +52,7 @@
                         <div class="d-flex gap-3 align-items-start">
 
                             <img
-                                src="{{ asset('storage/'.$favorite->anime->gambar) }}"
+                                src="{{ filter_var($favorite->anime->gambar, FILTER_VALIDATE_URL) ? $favorite->anime->gambar : asset('storage/'.$favorite->anime->gambar) }}"
                                 width="90"
                                 height="130"
                                 style="object-fit:cover;border-radius:10px"

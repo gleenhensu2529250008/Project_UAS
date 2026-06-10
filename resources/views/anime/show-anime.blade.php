@@ -62,7 +62,7 @@
                 <div class="img-wrapper text-center">
 
                     <img
-                        src="{{ asset('storage/' . $anime->gambar) }}"
+                        src="{{ filter_var($anime->gambar, FILTER_VALIDATE_URL) ? $anime->gambar : asset('storage/' . $anime->gambar) }}"
                         alt="{{ $anime->judul_anime }}"
                         width="225"
                         height="318"

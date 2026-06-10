@@ -529,8 +529,19 @@
     </div>
 
     <!-- FORM -->
-    <form action="/register" method="POST">
+    <form id="registerForm" action="/register" method="POST">
       @csrf
+
+      @if ($errors->any())
+        <div class="alert alert-danger py-2 px-3 mb-3" style="border-radius: 10px; font-size: 14px; background: rgba(255, 79, 123, 0.2); border: 1px solid var(--error); color: #fff;">
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+      @endif
+
     <div class="form-grid">
 
       <!-- USERNAME -->
@@ -538,7 +549,7 @@
         <label>Username</label>
         <div class="field-wrap">
           <span class="field-icon">✦</span>
-          <input type="text" id="username" placeholder="username kamu..." autocomplete="off" oninput="validateUsername()" />
+          <input type="text" id="username" name="name" placeholder="username kamu..." autocomplete="off" oninput="validateUsername()" value="{{ old('name') }}" required />
         </div>
         <div class="hint" id="hintUsername"></div>
       </div>
@@ -548,7 +559,7 @@
         <label>Tanggal Lahir</label>
         <div class="field-wrap">
           <span class="field-icon">🌸</span>
-          <input type="date" id="birthdate" oninput="validateBirthdate()" />
+          <input type="date" id="birthdate" name="birthdate" oninput="validateBirthdate()" value="{{ old('birthdate') }}" required />
         </div>
         <div class="hint" id="hintBirthdate"></div>
       </div>
@@ -558,7 +569,7 @@
         <label>Email</label>
         <div class="field-wrap">
           <span class="field-icon">✉</span>
-          <input type="email" id="email" placeholder="email@contoh.com" autocomplete="off" oninput="validateEmail()" />
+          <input type="email" id="email" name="email" placeholder="email@contoh.com" autocomplete="off" oninput="validateEmail()" value="{{ old('email') }}" required />
         </div>
         <div class="hint" id="hintEmail"></div>
       </div>
@@ -568,7 +579,7 @@
         <label>Password</label>
         <div class="field-wrap">
           <span class="field-icon">🔐</span>
-          <input type="password" id="password" placeholder="••••••••" oninput="validatePassword()" />
+          <input type="password" id="password" name="password" placeholder="••••••••" oninput="validatePassword()" required />
           <button class="toggle-pw" type="button" onclick="togglePw('password', this)" tabindex="-1">👁</button>
         </div>
         <div class="pw-strength" id="pwStrength">
@@ -586,7 +597,7 @@
         <label>Konfirmasi Password</label>
         <div class="field-wrap">
           <span class="field-icon">🔑</span>
-          <input type="password" id="confirmPassword" placeholder="••••••••" oninput="validateConfirm()" />
+          <input type="password" id="confirmPassword" name="password_confirmation" placeholder="••••••••" oninput="validateConfirm()" required />
           <button class="toggle-pw" type="button" onclick="togglePw('confirmPassword', this)" tabindex="-1">👁</button>
         </div>
         <div class="hint" id="hintConfirm"></div>
@@ -602,7 +613,7 @@
     </label>
 
     <!-- BUTTON -->
-    <button class="btn-register" id="btnRegister" disabled onclick="handleRegister()">Daftar Sekarang ✦</button>
+    <button type="submit" class="btn-register" id="btnRegister" disabled>Daftar Sekarang ✦</button>
 
     <div class="divider">atau</div>
 
@@ -755,19 +766,11 @@
   }
 
   /* ── Register handler ── */
-  function handleRegister() {
+  document.getElementById('registerForm').addEventListener('submit', function() {
     const btn = document.getElementById('btnRegister');
     btn.textContent = '⌛ Mendaftarkan...';
     btn.disabled = true;
-    setTimeout(() => {
-      document.getElementById('successOverlay').classList.add('show');
-      setTimeout(() => {
-        document.getElementById('successOverlay').classList.remove('show');
-        btn.textContent = 'Daftar Sekarang ✦';
-        btn.disabled = false;
-      }, 3000);
-    }, 1600);
-  }
+  });
 </script>
 </body>
 </html>
