@@ -18,7 +18,7 @@ class AnimeSeeder extends Seeder
             'episode' => 12,
             'sinopsis' => 'A world where hunters must battle deadly monsters to protect mankind. Sung Jinwoo, a low-ranking hunter, gains a mysterious system that allows him to level up without limit.',
             'rating' => 8.70,
-            'gambar' => 'https://cdn.myanimelist.net/images/anime/1816/141077.jpg',
+            'gambar' => 'https://cdn.myanimelist.net/images/anime/1801/142390.jpg',
         ]);
 
         \App\Models\Anime::create([
@@ -28,7 +28,7 @@ class AnimeSeeder extends Seeder
             'episode' => 28,
             'sinopsis' => 'After the party of heroes defeated the Demon King, mage Frieren embarks on a new journey to learn more about humans and magic, living through decades while her mortal comrades age.',
             'rating' => 9.39,
-            'gambar' => 'https://cdn.myanimelist.net/images/anime/1015/138025.jpg',
+            'gambar' => 'https://cdn.myanimelist.net/images/anime/1015/138006.jpg',
         ]);
 
         \App\Models\Anime::create([

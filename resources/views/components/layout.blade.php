@@ -77,6 +77,11 @@
             color:white;
         }
 
+        .dropdown-item:hover{
+            background:#ff1493 !important;
+            color:white !important;
+        }
+
         footer{
             background:#141414;
             border-top:1px solid #333;
@@ -97,7 +102,7 @@
         <div class="container">
 
             <a class="navbar-brand" href="/home">
-                WibuDesu
+                🌸
             </a>
 
             <button
@@ -113,22 +118,33 @@
 
                 <ul class="navbar-nav ms-4">
 
-                    <li class="nav-item">
+                    <li class="nav-item dropdown">
                         <a
-                            class="nav-link {{ request()->routeIs('home') ? 'active-link' : '' }}"
-                            href="/home"
-                        >
-                            Home
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a
-                            class="nav-link {{ request()->routeIs('anime.index') ? 'active-link' : '' }}"
-                            href="/anime"
+                            class="nav-link dropdown-toggle {{ (request()->routeIs('anime.*') || request()->is('anime*')) ? 'active-link' : '' }}"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
                         >
                             Anime
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-dark shadow" style="background: #141414; border: 1px solid #ff1493; border-radius: 10px;">
+                            <li>
+                                <a class="dropdown-item text-white fw-semibold" href="/anime">
+                                    Anime
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-white fw-semibold" href="#">
+                                    Manga
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-white fw-semibold" href="#">
+                                    Light Novel
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <li class="nav-item">
@@ -139,6 +155,17 @@
                             ❤️ Favorite
                         </a>
                     </li>
+
+                    @if(Auth::check() && Auth::user()->isAdmin())
+                    <li class="nav-item">
+                        <a
+                            class="nav-link {{ request()->routeIs('admin.users.index') ? 'active-link' : '' }}"
+                            href="{{ route('admin.users.index') }}"
+                        >
+                            👥 Kelola User
+                        </a>
+                    </li>
+                    @endif
 
                 </ul>
 
@@ -157,38 +184,32 @@
                 <div class="d-flex align-items-center gap-2">
 
                     <img
-                        src="https://i.pravatar.cc/100"
+                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Guest') }}&background=ff1493&color=fff"
                         class="profile-img"
-                        alt="Profile"
+                        alt=""
                     >
 
-                    <span>
-                        {{ Auth::user()->name ?? 'Guest' }}
-                    </span>
-
                     @auth
-
-                    <form action="/logout" method="POST">
-                        @csrf
-
-                        <button
-                            type="submit"
-                            class="btn btn-danger btn-sm"
-                        >
-                            Logout
-                        </button>
-
-                    </form>
-
+                    <a
+                        href="/profile"
+                        class="text-white text-decoration-none fw-semibold"
+                        style="transition: color 0.2s;"
+                        onmouseover="this.style.color='#ff1493'"
+                        onmouseout="this.style.color='white'"
+                    >
+                        {{ Auth::user()->name }}
+                        @if(Auth::user()->isAdmin())
+                            <span class="badge bg-warning text-dark ms-1" style="font-weight: bold; font-size: 11px; vertical-align: middle;">ADMIN</span>
+                        @endif
+                    </a>
                     @else
-
+                    <span class="text-white">Guest</span>
                     <a
                         href="/login"
                         class="btn btn-pink btn-sm"
                     >
                         Login
                     </a>
-
                     @endauth
 
                 </div>
@@ -205,6 +226,24 @@
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if(session('status') === 'profile-information-updated')
+            <div class="alert alert-success">
+                Profil berhasil diperbarui!
+            </div>
+        @endif
+
+        @if(session('status') === 'password-updated')
+            <div class="alert alert-success">
+                Password berhasil diperbarui!
             </div>
         @endif
 
@@ -226,6 +265,8 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+
 
 </body>
 </html>

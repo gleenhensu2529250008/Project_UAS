@@ -38,11 +38,33 @@ class AnimeController extends Controller
             'episode' => ['required'],
             'sinopsis' => ['required'],
             'rating' => ['required'],
-            'gambar' => ['required', 'image']
+            'gambar' => ['required_without:gambar_url', 'nullable', 'image'],
+            'gambar_url' => ['required_without:gambar', 'nullable', 'url']
         ]);
 
-        $gambar = $request->file('gambar')
-            ->store('anime', 'public');
+        if ($request->hasFile('gambar')) {
+            $gambar = $request->file('gambar')->store('anime', 'public');
+        } elseif ($request->filled('gambar_url')) {
+            try {
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Accept' => 'image/jpeg,image/png,image/*;q=0.8'
+                ])->timeout(15)->get($request->gambar_url);
+
+                if ($response->successful()) {
+                    $contents = $response->body();
+                    $filename = 'anime/' . uniqid() . '.jpg';
+                    \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $contents);
+                    $gambar = $filename;
+                } else {
+                    $gambar = $request->gambar_url; // fallback to URL if download failed
+                }
+            } catch (\Exception $e) {
+                $gambar = $request->gambar_url; // fallback to URL if exception thrown
+            }
+        } else {
+            return redirect()->back()->withErrors(['gambar' => 'Gambar/Poster Anime wajib diisi atau dicari secara otomatis.']);
+        }
 
         Anime::create([
             'judul_anime' => $request->judul_anime,
@@ -55,7 +77,7 @@ class AnimeController extends Controller
         ]);
 
         return redirect('/anime')
-            ->with('save', 'Anime berhasil ditambahkan');
+            ->with('success', 'Anime berhasil ditambahkan');
     }
 
     /**
@@ -90,17 +112,32 @@ class AnimeController extends Controller
             'rating' => ['required']
         ]);
 
-        $anime->update([
+        $data = [
             'judul_anime' => $request->judul_anime,
             'studio' => $request->studio,
             'genre' => $request->genre,
             'episode' => $request->episode,
             'sinopsis' => $request->sinopsis,
             'rating' => $request->rating
-        ]);
+        ];
+
+        if ($request->hasFile('gambar')) {
+            $request->validate([
+                'gambar' => ['image']
+            ]);
+            // Store the new image
+            $data['gambar'] = $request->file('gambar')->store('anime', 'public');
+            
+            // Delete old image if it's not a URL and exists
+            if ($anime->gambar && !filter_var($anime->gambar, FILTER_VALIDATE_URL)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($anime->gambar);
+            }
+        }
+
+        $anime->update($data);
 
         return redirect('/anime')
-            ->with('edit', 'Anime berhasil diubah');
+            ->with('success', 'Anime berhasil diubah');
     }
 
     /**

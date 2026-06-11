@@ -103,7 +103,7 @@
 
                             <!-- Detail -->
                             <a
-                                href="{{ route('anime.show',$favorite->id) }}"
+                                href="{{ route('anime.show', $favorite->anime_id) }}"
                                 class="btn btn-info btn-sm"
                             >
                                 Detail

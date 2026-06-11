@@ -6,6 +6,11 @@
         <h2 class="fw-bold text-white border-start border-4 border-pink ps-3">
             Top Anime Series
         </h2>
+        @if(Auth::user()->isAdmin())
+            <a href="{{ route('anime.create') }}" class="btn btn-pink btn-sm py-2 px-3 fw-bold">
+                ➕ Tambah Anime
+            </a>
+        @endif
     </div>
 
     <!-- Horizontal scrollable list (List ke Samping) -->
@@ -42,27 +47,34 @@
                             {{ $anime->sinopsis }}
                         </p>
                         
-                        <div class="d-flex gap-1 mt-auto flex-wrap">
-                            <a href="{{ route('anime.show', $anime->id) }}" class="btn btn-pink btn-sm py-1 px-2 flex-grow-1" style="font-size: 11px; font-weight: 600;">
+                        <div class="d-flex gap-1 mt-auto flex-wrap w-100">
+                            <a href="{{ route('anime.show', $anime->id) }}" class="btn btn-pink btn-sm py-1 px-2 flex-grow-1 text-center" style="font-size: 11px; font-weight: 600;">
                                 Detail
                             </a>
-                            <a href="{{ route('anime.edit', $anime->id) }}" class="btn btn-warning btn-sm py-1 px-2" style="font-size: 11px; font-weight: 600;">
+                            
+                            @if(Auth::user()->isAdmin())
+                            <a href="{{ route('anime.edit', $anime->id) }}" class="btn btn-warning btn-sm py-1 px-2 text-center" style="font-size: 11px; font-weight: 600;">
                                 Edit
                             </a>
-                            <form action="{{ route('favorite.store') }}" method="POST" class="m-0">
+                            @endif
+
+                            <form action="{{ route('favorite.store') }}" method="POST" class="m-0 flex-grow-1">
                                 @csrf
                                 <input type="hidden" name="anime_id" value="{{ $anime->id }}">
-                                <button type="submit" class="btn btn-danger btn-sm py-1 px-2">
+                                <button type="submit" class="btn btn-danger btn-sm py-1 px-2 w-100 text-center" style="font-size: 11px; font-weight: 600;">
                                     ❤️
                                 </button>
                             </form>
+
+                            @if(Auth::user()->isAdmin())
                             <form action="{{ route('anime.destroy', $anime->id) }}" method="POST" class="m-0">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-secondary btn-sm py-1 px-2" onclick="return confirm('Yakin ingin menghapus anime ini?')">
+                                <button type="submit" class="btn btn-secondary btn-sm py-1 px-2 text-center" onclick="return confirm('Yakin ingin menghapus anime ini?')">
                                     🗑️
                                 </button>
                             </form>
+                            @endif
                         </div>
                     </div>
                 </div>
