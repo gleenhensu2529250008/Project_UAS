@@ -146,17 +146,26 @@
 
                             <div class="mb-3">
                                 <label for="current_password" class="form-label text-secondary fw-semibold">Password Saat Ini</label>
-                                <input type="password" class="form-control text-white custom-input" id="current_password" name="current_password" required>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control text-white custom-input pe-5" id="current_password" name="current_password" required>
+                                    <button class="toggle-pw" type="button" onclick="togglePw('current_password', this)" tabindex="-1">👁</button>
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="password" class="form-label text-secondary fw-semibold">Password Baru</label>
-                                <input type="password" class="form-control text-white custom-input" id="password" name="password" required>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control text-white custom-input pe-5" id="password" name="password" required>
+                                    <button class="toggle-pw" type="button" onclick="togglePw('password', this)" tabindex="-1">👁</button>
+                                </div>
                             </div>
 
                             <div class="mb-4">
                                 <label for="password_confirmation" class="form-label text-secondary fw-semibold">Konfirmasi Password Baru</label>
-                                <input type="password" class="form-control text-white custom-input" id="password_confirmation" name="password_confirmation" required>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control text-white custom-input pe-5" id="password_confirmation" name="password_confirmation" required>
+                                    <button class="toggle-pw" type="button" onclick="togglePw('password_confirmation', this)" tabindex="-1">👁</button>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-pink px-4 py-2 fw-semibold">
@@ -186,6 +195,26 @@
     color: white;
 }
 
+.toggle-pw {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+    z-index: 5;
+    transition: color 0.2s;
+}
+
+.toggle-pw:hover {
+    color: #ff1493;
+}
+
 .custom-input:focus {
     background: #1e1e1e;
     color: white;
@@ -207,6 +236,12 @@
 </style>
 
 <script>
+    function togglePw(id, btn) {
+        const inp = document.getElementById(id);
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+        btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         // Switch to password tab if password errors exist
         @if($errors->updatePassword->any())

@@ -138,7 +138,10 @@
                     <!-- Password -->
                     <div class="mb-3">
                         <label class="form-label text-white-50 small">Password</label>
-                        <input type="password" name="password" class="form-control custom-input" placeholder="Min 6 karakter" required>
+                        <div class="position-relative">
+                            <input type="password" id="admin_password" name="password" class="form-control custom-input pe-5" placeholder="Min 6 karakter" required>
+                            <button class="toggle-pw" type="button" onclick="togglePw('admin_password', this)" tabindex="-1">👁</button>
+                        </div>
                     </div>
 
                     <!-- Is Admin Checkbox -->
@@ -200,6 +203,26 @@
     color: white;
 }
 
+.toggle-pw {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+    z-index: 5;
+    transition: color 0.2s;
+}
+
+.toggle-pw:hover {
+    color: #ff1493;
+}
+
 .custom-input:focus {
     background: #1e1e1e;
     color: white;
@@ -246,4 +269,11 @@
     border-color: #ff1493;
 }
 </style>
+<script>
+    function togglePw(id, btn) {
+        const inp = document.getElementById(id);
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+        btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+    }
+</script>
 </x-layout>

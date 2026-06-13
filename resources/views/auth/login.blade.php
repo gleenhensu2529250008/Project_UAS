@@ -254,6 +254,24 @@
       background: rgba(255,110,180,.06);
       box-shadow: 0 0 0 3px rgba(255,110,180,.15), 0 0 18px rgba(255,110,180,.12);
     }
+    .field input[type="password"] {
+      padding-right: 42px;
+    }
+    /* password toggle */
+    .toggle-pw {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: rgba(255,179,217,.5);
+      cursor: pointer;
+      font-size: 15px;
+      padding: 0;
+      line-height: 1;
+      transition: color .2s;
+      z-index: 5;
+    }
+    .toggle-pw:hover { color: var(--sakura); }
 
     /* ── OPTIONS ROW ── */
     .options {
@@ -434,7 +452,8 @@
       <label>Password</label>
       <div class="field-wrap">
         <span class="field-icon">🔐</span>
-        <input type="password" name="password" placeholder="••••••••" required />
+        <input type="password" id="password" name="password" placeholder="••••••••" required />
+        <button class="toggle-pw" type="button" onclick="togglePw('password', this)" tabindex="-1">👁</button>
       </div>
     </div>
 
@@ -460,6 +479,13 @@
 </form>
 
 <script>
+  /* ── Toggle password ── */
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+  }
+
   /* ── Checkbox visual ── */
   const rememberMe = document.getElementById('rememberMe');
   const chkBox = document.getElementById('chkBox');

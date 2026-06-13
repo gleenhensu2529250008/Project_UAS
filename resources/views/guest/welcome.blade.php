@@ -134,13 +134,6 @@
 
         <div class="col-lg-6 text-center">
 
-            <img
-                src="https://wallpapercave.com/wp/wp12217646.jpg"
-                alt="Blue Archive"
-                class="anime-image rounded-4 shadow-lg"
-                style="object-fit: cover; aspect-ratio: 16/9; max-height: 380px;"
-            >
-
         </div>
 
     </div>
