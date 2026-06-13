@@ -25,7 +25,7 @@ class AnimeController extends Controller
                 WHEN judul_anime = 'Re:Zero - Starting Life in Another World' THEN 6
                 WHEN judul_anime = 'Solo Leveling' THEN 7
                 WHEN judul_anime = 'Dr. Stone: New World' THEN 8
-                WHEN judul_anime = 'Frieren: Beyond Journey\'s End' THEN 9
+                WHEN judul_anime = 'Frieren: Beyond Journey''s End' THEN 9
                 WHEN judul_anime = 'Blue Archive' THEN 10
                 ELSE 100
             END ASC
