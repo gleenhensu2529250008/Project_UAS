@@ -15,8 +15,23 @@ class AnimeController extends Controller
     {
         $animes = Anime::orderBy('rating', 'desc')->get();
         $recentAnimes = Anime::orderBy('created_at', 'desc')->get();
+        $trendingAnimes = Anime::orderByRaw("
+            CASE 
+                WHEN judul_anime = 'Attack on Titan' THEN 1
+                WHEN judul_anime = 'My Hero Academia' THEN 2
+                WHEN judul_anime = 'Demon Slayer: Kimetsu no Yaiba' THEN 3
+                WHEN judul_anime = 'Jujutsu Kaisen' THEN 4
+                WHEN judul_anime = 'One Piece' THEN 5
+                WHEN judul_anime = 'Re:Zero - Starting Life in Another World' THEN 6
+                WHEN judul_anime = 'Solo Leveling' THEN 7
+                WHEN judul_anime = 'Dr. Stone: New World' THEN 8
+                WHEN judul_anime = 'Frieren: Beyond Journey\'s End' THEN 9
+                WHEN judul_anime = 'Blue Archive' THEN 10
+                ELSE 100
+            END ASC
+        ")->get();
 
-        return view('anime.list-anime', compact('animes', 'recentAnimes'));
+        return view('anime.list-anime', compact('animes', 'recentAnimes', 'trendingAnimes'));
     }
 
     /**
