@@ -90,5 +90,25 @@ class AnimeSeeder extends Seeder
             'rating' => 8.24,
             'gambar' => 'https://cdn.myanimelist.net/images/anime/11/79410.jpg',
         ]);
+
+        \App\Models\Anime::create([
+            'judul_anime' => 'Blue Archive',
+            'studio' => 'Yostar Pictures',
+            'genre' => 'Fantasy',
+            'episode' => 12,
+            'sinopsis' => 'This is a short animation commemorating the 1.5th Anniversary of the popular app game "Blue Archive" from Yostar.',
+            'rating' => 6.95,
+            'gambar' => 'anime/CJZbJ70ftuQdWZsmJO2wT6acaemMyzYF3S0llOmv.jpg',
+        ]);
+
+        \App\Models\Anime::create([
+            'judul_anime' => 'Dr. Stone: New World',
+            'studio' => 'TMS Entertainment',
+            'genre' => 'Adventure, Comedy',
+            'episode' => 11,
+            'sinopsis' => "With the ambitious Ryuusui Nanami on board, Senkuu Ishigami and his team are almost ready to sail the seas and reach the other side of the world—where the bizarre green light that petrified humanity originated. Thanks to the revival of a skillful chef, enough food is being prepared for the entire crew, and the incredible reinvention of the GPS promises to ensure safety on the open sea.\nPreparations for the upcoming journey progress swimmingly until Senkuu receives an eerie message from a mysterious source. More driven than ever, the scientist sets out to explore the new world and discover what it can offer for his scientific cause. Though the uncharted territories may hide unkind surprises, Senkuu, with a little help from science, is ready to take on any challenge.\n[Written by MAL Rewrite]",
+            'rating' => 8.14,
+            'gambar' => 'anime/6a2ad4c7accaf.jpg',
+        ]);
     }
 }
