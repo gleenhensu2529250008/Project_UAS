@@ -239,7 +239,7 @@
         </h5>
 
         <small class="text-secondary">
-            Tempat terbaik membaca Manga, Anime, dan Light Novel.
+            Tempat Terbaik untuk Info Anime
         </small>
 
     </footer>
