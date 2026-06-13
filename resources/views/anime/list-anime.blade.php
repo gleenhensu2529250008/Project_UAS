@@ -94,7 +94,153 @@
         </div>
     </div>
 
+    <!-- Recent Added Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
+        <h2 class="fw-bold text-white border-start border-4 border-pink ps-3">
+            Recent Added
+        </h2>
+        
+        <!-- Sort Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-pink btn-sm dropdown-toggle py-2 px-3 fw-bold" type="button" id="sortDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                ↕️ Sort: Front
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="sortDropdownBtn">
+                <li><button class="dropdown-item active" type="button" id="sort-front">Front</button></li>
+                <li><button class="dropdown-item" type="button" id="sort-back">Back</button></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Horizontal scrollable list (Recent Added) -->
+    <div class="anime-horizontal-scroll py-2 mb-5">
+        <div id="recent-anime-container" class="d-flex flex-nowrap gap-4 overflow-auto pb-3" style="scrollbar-width: thin; scrollbar-color: #ff1493 #1a1a1a;">
+            @foreach($recentAnimes as $anime)
+            <div class="anime-card-item flex-shrink-0" style="width: 220px;" data-timestamp="{{ $anime->created_at ? $anime->created_at->timestamp : $anime->id }}">
+                <div class="anime-poster-card shadow position-relative rounded-4 overflow-hidden" style="height: 310px; transition: transform 0.3s ease;">
+                    
+                    <!-- Rating Badge -->
+                    <span class="rating-badge">⭐ {{ number_format($anime->rating, 1) }}</span>
+
+                    <!-- Poster Image -->
+                    @if($anime->gambar)
+                        <img src="{{ filter_var($anime->gambar, FILTER_VALIDATE_URL) ? $anime->gambar : asset('storage/'.$anime->gambar) }}" 
+                             alt="{{ $anime->judul_anime }}" 
+                             class="w-100 h-100" 
+                             style="object-fit: cover;" />
+                    @else
+                        <!-- Blank / Empty state -->
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-dark text-secondary">
+                            <span>No Image</span>
+                        </div>
+                    @endif
+
+                    <!-- Detail Overlay on Hover -->
+                    <div class="anime-card-overlay p-3">
+                        <div class="small text-pink mb-1 fw-bold">{{ $anime->studio }}</div>
+                        <div class="small text-light mb-2 text-truncate" style="font-size: 11px;">{{ $anime->genre }}</div>
+                        <p class="text-white-50 mb-3" style="font-size: 11px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;">
+                            {{ $anime->sinopsis }}
+                        </p>
+                        
+                        <div class="d-flex gap-1 mt-auto flex-wrap w-100">
+                            <a href="{{ route('anime.show', $anime->id) }}" class="btn btn-pink btn-sm py-1 px-2 flex-grow-1 text-center" style="font-size: 11px; font-weight: 600;">
+                                Detail
+                            </a>
+                            
+                            @if(Auth::user()->isAdmin())
+                            <a href="{{ route('anime.edit', $anime->id) }}" class="btn btn-warning btn-sm py-1 px-2 text-center" style="font-size: 11px; font-weight: 600;">
+                                Edit
+                            </a>
+                            @endif
+
+                            <form action="{{ route('favorite.store') }}" method="POST" class="m-0 flex-grow-1">
+                                @csrf
+                                <input type="hidden" name="anime_id" value="{{ $anime->id }}">
+                                <button type="submit" class="btn btn-danger btn-sm py-1 px-2 w-100 text-center" style="font-size: 11px; font-weight: 600;">
+                                    ❤️
+                                </button>
+                            </form>
+
+                            @if(Auth::user()->isAdmin())
+                            <form action="{{ route('anime.destroy', $anime->id) }}" method="POST" class="m-0">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-secondary btn-sm py-1 px-2 text-center" onclick="return confirm('Yakin ingin menghapus anime ini?')">
+                                    🗑️
+                                </button>
+                            </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Title & Info below poster -->
+                <div class="mt-3">
+                    <h5 class="fw-bold text-white text-truncate mb-1" style="font-size: 16px;" title="{{ $anime->judul_anime }}">
+                        {{ $anime->judul_anime }}
+                    </h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-secondary" style="font-size: 13px;">{{ $anime->episode }} Episodes</span>
+                        <span class="badge bg-secondary text-truncate" style="font-size: 10px; background: #ff1493 !important; max-width: 100px;">{{ $anime->studio }}</span>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('recent-anime-container');
+    if (!container) return;
+
+    let cards = Array.from(container.getElementsByClassName('anime-card-item'));
+    const sortBtn = document.getElementById('sortDropdownBtn');
+    const sortFront = document.getElementById('sort-front');
+    const sortBack = document.getElementById('sort-back');
+
+    function sortList(order) {
+        sortFront.classList.remove('active');
+        sortBack.classList.remove('active');
+
+        if (order === 'front') {
+            sortFront.classList.add('active');
+            sortBtn.innerHTML = '↕️ Sort: Front';
+            // Ascending: Paling baru di paling depan (higher timestamp first)
+            cards.sort((a, b) => {
+                const tsA = parseInt(a.getAttribute('data-timestamp')) || 0;
+                const tsB = parseInt(b.getAttribute('data-timestamp')) || 0;
+                return tsB - tsA;
+            });
+        } else {
+            sortBack.classList.add('active');
+            sortBtn.innerHTML = '↕️ Sort: Back';
+            // Descending: Paling baru di paling belakang (lower timestamp first)
+            cards.sort((a, b) => {
+                const tsA = parseInt(a.getAttribute('data-timestamp')) || 0;
+                const tsB = parseInt(b.getAttribute('data-timestamp')) || 0;
+                return tsA - tsB;
+            });
+        }
+
+        // Re-append sorted cards
+        cards.forEach(card => container.appendChild(card));
+    }
+
+    sortFront.addEventListener('click', function(e) {
+        e.preventDefault();
+        sortList('front');
+    });
+
+    sortBack.addEventListener('click', function(e) {
+        e.preventDefault();
+        sortList('back');
+    });
+});
+</script>
 
 <style>
 .border-pink {

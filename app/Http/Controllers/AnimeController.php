@@ -14,8 +14,9 @@ class AnimeController extends Controller
     public function index()
     {
         $animes = Anime::orderBy('rating', 'desc')->get();
+        $recentAnimes = Anime::orderBy('created_at', 'desc')->get();
 
-        return view('anime.list-anime', compact('animes'));
+        return view('anime.list-anime', compact('animes', 'recentAnimes'));
     }
 
     /**
