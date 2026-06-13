@@ -118,33 +118,13 @@
 
                 <ul class="navbar-nav ms-4">
 
-                    <li class="nav-item dropdown">
+                    <li class="nav-item">
                         <a
-                            class="nav-link dropdown-toggle {{ (request()->routeIs('anime.*') || request()->is('anime*')) ? 'active-link' : '' }}"
-                            href="#"
-                            role="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
+                            class="nav-link {{ (request()->routeIs('anime.*') || request()->is('anime*')) ? 'active-link' : '' }}"
+                            href="/anime"
                         >
                             Anime
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark shadow" style="background: #141414; border: 1px solid #ff1493; border-radius: 10px;">
-                            <li>
-                                <a class="dropdown-item text-white fw-semibold" href="/anime">
-                                    Anime
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-white fw-semibold" href="#">
-                                    Manga
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-white fw-semibold" href="#">
-                                    Light Novel
-                                </a>
-                            </li>
-                        </ul>
                     </li>
 
                     <li class="nav-item">
