@@ -493,11 +493,11 @@
 
 <!-- BACKGROUND -->
 <div id="bg-wrap">
-  <div class="bg-slide active"></div>
-  <div class="bg-slide"></div>
-  <div class="bg-slide"></div>
-  <div class="bg-slide"></div>
-  <div class="bg-slide"></div>
+  <div class="bg-slide active" style="background-image: url('https://wallpaperaccess.com/full/9197222.jpg'); background-size: cover; background-position: center;"></div>
+  <div class="bg-slide" style="background-image: url('https://cdn.wallpapersafari.com/22/69/258kVX.jpeg'); background-size: cover; background-position: center;"></div>
+  <div class="bg-slide" style="background-image: url('https://wallpaperaccess.com/full/7304695.jpg'); background-size: cover; background-position: center;"></div>
+  <div class="bg-slide" style="background-image: url('https://wallpaperaccess.com/full/10882346.jpg'); background-size: cover; background-position: center;"></div>
+  <div class="bg-slide" style="background-image: url('https://wallpaperaccess.com/full/44729.jpg'); background-size: cover; background-position: center;"></div>
 </div>
 <div id="overlay"></div>
 
