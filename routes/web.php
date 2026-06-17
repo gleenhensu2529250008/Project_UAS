@@ -17,10 +17,13 @@ Route::get('/', function () {
     return view('guest.welcome');
 })->name('welcome');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/home', [AnimeController::class, 'home'])
-        ->name('home');
+Route::get('/anime', [AnimeController::class, 'index'])->name('anime.index');
+Route::get('/api/anime-titles', [AnimeController::class, 'getTitlesJson'])->name('api.anime.titles');
 
+Route::get('/home', [AnimeController::class, 'home'])
+    ->name('home');
+
+Route::middleware('auth')->group(function () {
     Route::get('/favorite', function () {
         return view('anime.fav-anime');
     })->name('favorite');
@@ -28,9 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', function () {
         return view('profile.index');
     })->name('profile');
-
-    // Public/User authenticated anime routes
-    Route::get('/anime', [AnimeController::class, 'index'])->name('anime.index');
 
     // Admin only anime and user management routes
     Route::middleware('admin')->group(function () {

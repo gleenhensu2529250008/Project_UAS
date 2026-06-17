@@ -17,8 +17,25 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
 
-        // Guests should be redirected to login when trying to access /home
+        // Guests should be able to see /home
         $response = $this->get('/home');
+        $response->assertStatus(200);
+
+        // Guests should be redirected to login when trying to access /favorite
+        $response = $this->get('/favorite');
+        $response->assertRedirect('/login');
+
+        // Guests should be redirected to login when trying to access detail page
+        $anime = \App\Models\Anime::create([
+            'judul_anime' => 'Test Anime',
+            'studio' => 'Test Studio',
+            'genre' => 'Test Genre',
+            'episode' => 12,
+            'sinopsis' => 'Test Sinopsis',
+            'rating' => 8.0,
+            'gambar' => 'test.jpg'
+        ]);
+        $response = $this->get("/anime/{$anime->id}");
         $response->assertRedirect('/login');
 
         // Authenticated users should be redirected from / to /home

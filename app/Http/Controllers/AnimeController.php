@@ -13,25 +13,53 @@ class AnimeController extends Controller
      */
     public function index()
     {
-        $animes = Anime::orderBy('rating', 'desc')->get();
-        $recentAnimes = Anime::orderBy('created_at', 'desc')->get();
-        $trendingAnimes = Anime::orderByRaw("
-            CASE 
-                WHEN judul_anime = 'Attack on Titan' THEN 1
-                WHEN judul_anime = 'My Hero Academia' THEN 2
-                WHEN judul_anime = 'Demon Slayer: Kimetsu no Yaiba' THEN 3
-                WHEN judul_anime = 'Jujutsu Kaisen' THEN 4
-                WHEN judul_anime = 'One Piece' THEN 5
-                WHEN judul_anime = 'Re:Zero - Starting Life in Another World' THEN 6
-                WHEN judul_anime = 'Solo Leveling' THEN 7
-                WHEN judul_anime = 'Dr. Stone: New World' THEN 8
-                WHEN judul_anime = 'Frieren: Beyond Journey''s End' THEN 9
-                WHEN judul_anime = 'Blue Archive' THEN 10
-                ELSE 100
-            END ASC
-        ")->get();
+        $search = request('search');
+        $correctedSearch = null;
+        $originalSearch = null;
 
-        return view('anime.list-anime', compact('animes', 'recentAnimes', 'trendingAnimes'));
+        if ($search) {
+            $originalSearch = $search;
+            $allAnimes = Anime::all();
+            $bestMatch = null;
+            $highestScore = 0;
+
+            foreach ($allAnimes as $anime) {
+                $score = $this->calculateSimilarity($search, $anime->judul_anime);
+                if ($score > $highestScore) {
+                    $highestScore = $score;
+                    $bestMatch = $anime;
+                }
+            }
+
+            if ($bestMatch && $highestScore >= 0.35) {
+                $correctedSearch = $bestMatch->judul_anime;
+                $animes = collect([$bestMatch]);
+            } else {
+                $animes = collect();
+            }
+            $recentAnimes = collect();
+            $trendingAnimes = collect();
+        } else {
+            $animes = Anime::orderBy('rating', 'desc')->get();
+            $recentAnimes = Anime::orderBy('created_at', 'desc')->get();
+            $trendingAnimes = Anime::orderByRaw("
+                CASE 
+                    WHEN judul_anime = 'Attack on Titan' THEN 1
+                    WHEN judul_anime = 'My Hero Academia' THEN 2
+                    WHEN judul_anime = 'Demon Slayer: Kimetsu no Yaiba' THEN 3
+                    WHEN judul_anime = 'Jujutsu Kaisen' THEN 4
+                    WHEN judul_anime = 'One Piece' THEN 5
+                    WHEN judul_anime = 'Re:Zero - Starting Life in Another World' THEN 6
+                    WHEN judul_anime = 'Solo Leveling' THEN 7
+                    WHEN judul_anime = 'Dr. Stone: New World' THEN 8
+                    WHEN judul_anime = 'Frieren: Beyond Journey''s End' THEN 9
+                    WHEN judul_anime = 'Blue Archive' THEN 10
+                    ELSE 100
+                END ASC
+            ")->get();
+        }
+
+        return view('anime.list-anime', compact('animes', 'recentAnimes', 'trendingAnimes', 'correctedSearch', 'originalSearch'));
     }
 
     /**
@@ -201,5 +229,70 @@ public function removeFavorite($id)
     return redirect()
         ->back()
         ->with('success', 'Anime dihapus dari Favorite');
+}
+
+public function getTitlesJson()
+{
+    $titles = Anime::select('id', 'judul_anime')->get();
+    return response()->json($titles);
+}
+
+private function calculateSimilarity($query, $title)
+{
+    $query = strtolower(trim($query));
+    $title = strtolower(trim($title));
+
+    if ($query === $title) {
+        return 1.0;
+    }
+
+    if (strlen($query) > 255 || strlen($title) > 255) {
+        return 0;
+    }
+
+    // Exact substring match
+    if (str_contains($title, $query)) {
+        return 0.8 + (strlen($query) / strlen($title)) * 0.2;
+    }
+    
+    if (str_contains($query, $title)) {
+        return 0.8 + (strlen($title) / strlen($query)) * 0.2;
+    }
+
+    // Levenshtein distance on full strings
+    $lev = levenshtein($query, $title);
+    $maxLen = max(strlen($query), strlen($title));
+    $fullScore = $maxLen > 0 ? (1 - ($lev / $maxLen)) : 0;
+
+    // Word-level similarity to catch typos in specific words
+    $queryWords = preg_split('/[\s,.:;!?_-]+/', $query, -1, PREG_SPLIT_NO_EMPTY);
+    $titleWords = preg_split('/[\s,.:;!?_-]+/', $title, -1, PREG_SPLIT_NO_EMPTY);
+
+    $wordScores = [];
+    foreach ($queryWords as $qw) {
+        $bestWordScore = 0;
+        foreach ($titleWords as $tw) {
+            if ($qw === $tw) {
+                $wordScore = 1.0;
+            } elseif (str_contains($tw, $qw)) {
+                $wordScore = 0.8 * (strlen($qw) / strlen($tw));
+            } elseif (str_contains($qw, $tw)) {
+                $wordScore = 0.8 * (strlen($tw) / strlen($qw));
+            } else {
+                $wLev = levenshtein($qw, $tw);
+                $wMax = max(strlen($qw), strlen($tw));
+                $wordScore = $wMax > 0 ? (1 - ($wLev / $wMax)) : 0;
+            }
+
+            if ($wordScore > $bestWordScore) {
+                $bestWordScore = $wordScore;
+            }
+        }
+        $wordScores[] = $bestWordScore;
+    }
+
+    $avgWordScore = count($wordScores) > 0 ? array_sum($wordScores) / count($wordScores) : 0;
+
+    return max($fullScore, $avgWordScore);
 }
 }
