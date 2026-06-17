@@ -89,23 +89,7 @@ class AnimeController extends Controller
         if ($request->hasFile('gambar')) {
             $gambar = $request->file('gambar')->store('anime', 'public');
         } elseif ($request->filled('gambar_url')) {
-            try {
-                $response = \Illuminate\Support\Facades\Http::withHeaders([
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Accept' => 'image/jpeg,image/png,image/*;q=0.8'
-                ])->timeout(15)->get($request->gambar_url);
-
-                if ($response->successful()) {
-                    $contents = $response->body();
-                    $filename = 'anime/' . uniqid() . '.jpg';
-                    \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $contents);
-                    $gambar = $filename;
-                } else {
-                    $gambar = $request->gambar_url; // fallback to URL if download failed
-                }
-            } catch (\Exception $e) {
-                $gambar = $request->gambar_url; // fallback to URL if exception thrown
-            }
+            $gambar = $request->gambar_url;
         } else {
             return redirect()->back()->withErrors(['gambar' => 'Gambar/Poster Anime wajib diisi atau dicari secara otomatis.']);
         }

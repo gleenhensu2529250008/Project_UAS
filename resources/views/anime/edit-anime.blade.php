@@ -18,6 +18,16 @@
 
                 <div class="card-body">
 
+                    @if ($errors->any())
+                        <div class="alert alert-danger border-0 rounded-3 mb-4" style="background-color: #5a1422; color: #ffccd3;">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form
                         action="{{ route('anime.update', $anime->id) }}"
                         method="POST"
